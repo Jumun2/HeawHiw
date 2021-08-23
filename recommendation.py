@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def get_data():
-    food_data = pd.read_csv('dataset/food_data.csv.zip')
+    food_data = pd.read_csv('dataset/MyTestDATA.csv.zip')
     food_data['menu_title'] = food_data['menu_title'].str.lower()
     return food_data
 
@@ -15,7 +15,7 @@ def combine_data(data):
     data_recommend['combine'] = data_recommend[data_recommend.columns[0:2]].apply(
         lambda x: ','.join(x.dropna().astype(str)), axis=1)
 
-    data_recommend = data_recommend.drop(columns=['ingredient ', 'genres'])
+    data_recommend = data_recommend.drop(columns=['ingredient', 'nutrients', 'price'])
     return data_recommend
 
 
@@ -38,24 +38,25 @@ def recommend_food(title, data, combine, transform):
 
     sim_scores = list(enumerate(transform[index]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:4]
+    sim_scores = sim_scores[1:6]
 
     movie_indices = [i[0] for i in sim_scores]
 
     food_id = data['food_id'].iloc[movie_indices]
     movie_title = data['menu_title'].iloc[movie_indices]
-    menu_genres = data['genres'].iloc[movie_indices]
     details = data['details'].iloc[movie_indices]
+    nutrients = data['nutrients'].iloc[movie_indices]
+    price = data['price'].iloc[movie_indices]
 
-    recommendation_data = pd.DataFrame(columns=['Food_Id', 'Menu', 'Genres', 'details'])
+    recommendation_data = pd.DataFrame(columns=['Food_Id', 'Menu', 'details', 'nutrients', 'price'])
 
     recommendation_data['Food_Id'] = food_id
     recommendation_data['Menu'] = movie_title
-    recommendation_data['Genres'] = menu_genres
     recommendation_data['details'] = details
+    recommendation_data['nutrients'] = nutrients
+    recommendation_data['price'] = price
 
     return recommendation_data
-
 
 def results(movie_name):
     movie_name = movie_name.lower()
