@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/food_list/<title>', methods=['GET'])
+@app.route('/menu/<title>', methods=['GET'])
 def recommend_food(title: str):
     res = recommendation.results(title)
     return jsonify(res)
