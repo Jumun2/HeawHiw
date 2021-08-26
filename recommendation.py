@@ -67,7 +67,10 @@ def results(movie_name):
 
     if movie_name not in find_menu['menu_title'].unique():
         return 'Food not in Database'
-
+    
     else:
         recommendations = recommend_food(movie_name, find_menu, combine_result, transform_result)
-        return recommendations.to_dict('records')
+        recommendations_result = {
+            'menu_items': recommendations.to_dict('records')
+        }
+        return recommendations_result
