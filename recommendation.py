@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def get_data():
-    food_data = pd.read_csv('dataset/TestDATA.csv.zip')
+    food_data = pd.read_csv('dataset/NewestDATA2.csv.zip')  
     food_data['menu_title'] = food_data['menu_title'].str.lower()
     return food_data
 
@@ -15,7 +15,7 @@ def combine_data(data):
     data_recommend['combine'] = data_recommend[data_recommend.columns[0:2]].apply(
         lambda x: ','.join(x.dropna().astype(str)), axis=1)
 
-    data_recommend = data_recommend.drop(columns=['ingredient', 'nutrients', 'price'])
+    data_recommend = data_recommend.drop(columns=['genres', 'ingredient', 'nutrients'])
     return data_recommend
 
 
@@ -45,16 +45,18 @@ def recommend_food(title, data, combine, transform):
     food_id = data['food_id'].iloc[movie_indices]
     movie_title = data['menu_title'].iloc[movie_indices]
     details = data['details'].iloc[movie_indices]
+    genres = data['genres'].iloc[movie_indices]
+    ingredient = data['ingredient'].iloc[movie_indices]
     nutrients = data['nutrients'].iloc[movie_indices]
-    price = data['price'].iloc[movie_indices]
 
-    recommendation_data = pd.DataFrame(columns=['Food_Id', 'Menu', 'details', 'nutrients', 'price'])
+    recommendation_data = pd.DataFrame(columns=['food_id', 'menu_title', 'details', 'Genres', 'ingredient', 'nutrients'])
 
-    recommendation_data['Food_Id'] = food_id
-    recommendation_data['Menu'] = movie_title
+    recommendation_data['food_id'] = food_id
+    recommendation_data['menu_title'] = movie_title
     recommendation_data['details'] = details
+    recommendation_data['Genres'] = genres
+    recommendation_data['ingredient'] = ingredient
     recommendation_data['nutrients'] = nutrients
-    recommendation_data['price'] = price
 
     return recommendation_data
 
@@ -67,7 +69,7 @@ def results(movie_name):
 
     if movie_name not in find_menu['menu_title'].unique():
         return 'Food not in Database'
-    
+
     else:
         recommendations = recommend_food(movie_name, find_menu, combine_result, transform_result)
         recommendations_result = {
