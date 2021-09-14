@@ -6,7 +6,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 def get_data():
     food_data = pd.read_csv('dataset/NewestDATA2.csv.zip')
-    food_data['menu_title'] = food_data['menu_title'].str.lower()
     return food_data
 
 
@@ -33,9 +32,9 @@ def transform_data(data_combine, data_details):
     return cosine_sim
 
 
-def recommend_food(title, data, combine, transform):
-    indices = pd.Series(data.index, index=data['menu_title'])
-    index = indices[title]
+def recommend_food(f_id, data, combine, transform):
+    indices = pd.Series(data.index, index=data['food_id'])
+    index = indices[f_id]
 
     sim_scores = list(enumerate(transform[index]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
@@ -56,21 +55,20 @@ def recommend_food(title, data, combine, transform):
     return recommendation_data
 
 
-def results(menu_recommends):
-    menu_recommends = menu_recommends.lower()
+def results(food_id):
 
-    find_menu = get_data()
-    combine_result = combine_data(find_menu)
-    transform_result = transform_data(combine_result, find_menu)
+    data = get_data()
+    combine_result = combine_data(data)
+    transform_result = transform_data(combine_result, data)
 
     recommend_response = {
         "menu_items": []
     }
 
-    if menu_recommends in find_menu["menu_title"].unique():
+    if int(food_id) in data["food_id"].unique():
         recommend_response["menu_items"] = recommend_food(
-            menu_recommends, 
-            find_menu, 
+            int(food_id),
+            data,
             combine_result, 
             transform_result
         ).to_dict("records")
